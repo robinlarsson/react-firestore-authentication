@@ -24,6 +24,8 @@ class Firebase {
 
     this.auth = app.auth();
     this.db = app.firestore();
+    const settings = { timestampsInSnapshots: true };
+    this.db.settings(settings);
 
     /* Social Sign In Method Provider */
 
@@ -103,6 +105,20 @@ class Firebase {
   message = uid => this.db.doc(`messages/${uid}`);
 
   messages = () => this.db.collection('messages');
+
+  // *** Game API ***
+
+  game = uid => this.db.doc(`game/${uid}`);
+
+  games = () => this.db.collection('game');
+
+  hand = (uid, handId) => this.db.doc(`game/${uid}/hands/${handId}`);
+
+  hands = uid =>
+    this.db
+      .collection('game')
+      .doc(uid)
+      .collection('hands');
 }
 
 export default Firebase;
