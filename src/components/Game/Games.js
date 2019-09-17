@@ -57,7 +57,8 @@ class Games extends Component {
       name: this.state.name,
       userId: authUser.uid,
       createdAt: this.props.firebase.fieldValue.serverTimestamp(),
-      turn: '',
+      round: 0,
+      player: 1,
     });
 
     this.setState({ name: '' });
@@ -120,7 +121,7 @@ class Games extends Component {
                 value={name}
                 onChange={this.onChangeName}
               />
-              <button type="submit">Start game</button>
+              <button type="submit">Create game</button>
             </form>
           </div>
         )}

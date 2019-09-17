@@ -12,7 +12,7 @@ class Game extends Component {
       gameLoading: false,
       handLoading: false,
       game: null,
-      hands: null,
+      hands: [],
     };
   }
 
@@ -53,7 +53,7 @@ class Game extends Component {
             handLoading: false,
           });
         } else {
-          this.setState({ hands: null, handLoading: false });
+          this.setState({ hands: [], handLoading: false });
         }
       });
   };
@@ -63,7 +63,8 @@ class Game extends Component {
     this.handUnsubscribe && this.handUnsubscribe();
   }
 
-  onJoinGame = (game, authUser) => {
+  onJoinGame = authUser => {
+    const { hands } = this.state;
     const gameId = this.props.match.params.id;
 
     this.props.firebase.hands(gameId).add({
@@ -76,6 +77,7 @@ class Game extends Component {
       },
       hasWon: false,
       userId: authUser.uid,
+      player: hands.length + 1,
     });
   };
 
@@ -95,16 +97,27 @@ class Game extends Component {
 
                 {handLoading && <div>Loading ...</div>}
 
-                {hands && <Hands hands={hands} gameId={gameId} />}
+                {hands && (
+                  <>
+                    <span>Players: {hands.length}</span>
+                    <div>Round: {game.round}</div>
+                    <Hands
+                      hands={hands}
+                      game={game}
+                      gameId={gameId}
+                    />
+                  </>
+                )}
 
                 {hands === null ||
                 (hands &&
                   hands.filter(hand => hand.userId === authUser.uid)
-                    .length === 0) ? (
+                    .length === 0 &&
+                  game.round === 0) ? (
                   <span>
                     <button
                       type="button"
-                      onClick={() => this.onJoinGame(game, authUser)}
+                      onClick={() => this.onJoinGame(authUser)}
                     >
                       Join game
                     </button>

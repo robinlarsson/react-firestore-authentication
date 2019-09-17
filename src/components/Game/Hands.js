@@ -6,7 +6,7 @@ import Hand from './Hand';
 
 class Hands extends Component {
   render() {
-    const { hands, gameId } = this.props;
+    const { hands, game, gameId } = this.props;
 
     return (
       <AuthUserContext.Consumer>
@@ -14,11 +14,10 @@ class Hands extends Component {
           <div>
             {hands && (
               <>
-                <span>Players: {hands.length}</span>
                 {hands.map(hand => {
                   return (
                     <div key={hand.uid}>
-                      Player: has played{' '}
+                      Player {hand.player} has played{' '}
                       {
                         Object.keys(hand.cards).filter(
                           key => hand.cards[key],
@@ -26,7 +25,12 @@ class Hands extends Component {
                       }{' '}
                       cards
                       {hand.userId === authUser.uid && (
-                        <Hand hand={hand} gameId={gameId} />
+                        <Hand
+                          hand={hand}
+                          hands={hands}
+                          game={game}
+                          gameId={gameId}
+                        />
                       )}
                     </div>
                   );
