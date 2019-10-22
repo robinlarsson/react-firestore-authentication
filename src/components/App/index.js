@@ -7,7 +7,8 @@ import SignUpPage from '../SignUp';
 import SignInPage from '../SignIn';
 import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
-import GamePage from '../Game';
+import Games from '../Games';
+import Game from '../Game';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 
@@ -18,9 +19,7 @@ const App = () => (
   <Router>
     <div>
       <Navigation />
-
       <hr />
-
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
       <Route path={ROUTES.SIGN_IN} component={SignInPage} />
@@ -29,7 +28,12 @@ const App = () => (
         component={PasswordForgetPage}
       />
       <Route path={ROUTES.HOME} component={HomePage} />
-      <Route path={ROUTES.GAME} component={GamePage} />
+      <Route exact path={ROUTES.GAME_DETAILS} component={Game} />
+      <Route
+        exact
+        path={ROUTES.GAME}
+        render={props => <Games {...props} />}
+      />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.ADMIN} component={AdminPage} />
     </div>

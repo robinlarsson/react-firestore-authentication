@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import { AuthUserContext } from '../Session';
-import { withFirebase } from '../Firebase';
-import Hand from './Hand';
+import { AuthUserContext } from '../../Session';
+import { withFirebase } from '../../Firebase';
+import Hand from '../Hand';
 
 class Hands extends Component {
   render() {
-    const { hands, game, gameId } = this.props;
+    const { hands, game } = this.props;
 
     return (
       <AuthUserContext.Consumer>
@@ -24,13 +24,17 @@ class Hands extends Component {
                         ).length
                       }{' '}
                       cards
+                      {game.betStarted && (
+                        <span> and bet {hand.bet}</span>
+                      )}{' '}
+                      {hand.hasFolded
+                        ? 'has folded'
+                        : 'has not folded'}{' '}
+                      {game.player === hand.player
+                        ? 'currently playing'
+                        : 'not playing'}
                       {hand.userId === authUser.uid && (
-                        <Hand
-                          hand={hand}
-                          hands={hands}
-                          game={game}
-                          gameId={gameId}
-                        />
+                        <Hand hand={hand} {...this.props} />
                       )}
                     </div>
                   );

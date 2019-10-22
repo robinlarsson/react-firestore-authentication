@@ -1,16 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import rootReducers from './reducers';
+import rootSaga from './sagas';
 
 import App from './components/App';
 import Firebase, { FirebaseContext } from './components/Firebase';
 
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(
+  rootReducers,
+  applyMiddleware(sagaMiddleware),
+);
+
+sagaMiddleware.run(rootSaga);
+
 ReactDOM.render(
-  <FirebaseContext.Provider value={new Firebase()}>
-    <App />
-  </FirebaseContext.Provider>,
+  <Provider store={store}>
+    <FirebaseContext.Provider value={new Firebase()}>
+      <App />
+    </FirebaseContext.Provider>
+  </Provider>,
   document.getElementById('root'),
 );
 

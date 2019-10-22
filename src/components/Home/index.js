@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 
 import { withAuthorization, withEmailVerification } from '../Session';
 import Messages from '../Messages';
-import Games from '../Game/Games';
+import Games from '../Games';
 
 const HomePage = () => (
   <div>

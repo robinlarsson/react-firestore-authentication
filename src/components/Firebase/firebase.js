@@ -1,3 +1,5 @@
+import '@firebase/firestore';
+import ReduxSagaFirebase from 'redux-saga-firebase';
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -11,31 +13,26 @@ const config = {
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
 };
 
+const firebaseApp = app.initializeApp(config);
+export const rsf = new ReduxSagaFirebase(firebaseApp);
+
 class Firebase {
   constructor() {
-    app.initializeApp(config);
-
     /* Helper */
-
     this.fieldValue = app.firestore.FieldValue;
     this.emailAuthProvider = app.auth.EmailAuthProvider;
 
     /* Firebase APIs */
-
     this.auth = app.auth();
     this.db = app.firestore();
-    const settings = { timestampsInSnapshots: true };
-    this.db.settings(settings);
 
     /* Social Sign In Method Provider */
-
     this.googleProvider = new app.auth.GoogleAuthProvider();
     this.facebookProvider = new app.auth.FacebookAuthProvider();
     this.twitterProvider = new app.auth.TwitterAuthProvider();
   }
 
   // *** Auth API ***
-
   doCreateUserWithEmailAndPassword = (email, password) =>
     this.auth.createUserWithEmailAndPassword(email, password);
 
