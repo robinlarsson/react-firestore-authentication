@@ -8,7 +8,7 @@ import AddGame from './AddGame';
 const Games = ({ games, loading, onFetchGames }) => {
   useEffect(() => {
     onFetchGames();
-  });
+  }, [onFetchGames]);
 
   return (
     <div>
@@ -23,7 +23,7 @@ const Games = ({ games, loading, onFetchGames }) => {
 const mapStateToProps = state => {
   return {
     games: state.games.games,
-    loading: state.loading,
+    loading: state.games.loading,
   };
 };
 
