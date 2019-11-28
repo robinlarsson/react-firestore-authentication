@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 
 import GameList from './GameList';
 import { fetchGames } from './actions';
 import AddGame from './AddGame';
+import { GamesContext } from '../../context/GamesContext';
 
 const Games = ({ games, loading, onFetchGames }) => {
+  const { setGames } = useContext(GamesContext);
+
   useEffect(() => {
     onFetchGames();
   }, [onFetchGames]);
+
+  setGames(games);
 
   return (
     <div>

@@ -11,6 +11,11 @@ import rootSaga from './sagas';
 
 import App from './components/App';
 import Firebase, { FirebaseContext } from './components/Firebase';
+import { HandsProvider } from './context/HandsContext';
+import { GamesProvider } from './context/GamesContext';
+import { GameProvider } from './context/GameContext';
+import { HandProvider } from './context/HandContext';
+import { CurrentPlayerProvider } from './context/CurrentPlayerContext';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -24,7 +29,17 @@ sagaMiddleware.run(rootSaga);
 ReactDOM.render(
   <Provider store={store}>
     <FirebaseContext.Provider value={new Firebase()}>
-      <App />
+      <GamesProvider>
+        <GameProvider>
+          <HandsProvider>
+            <HandProvider>
+              <CurrentPlayerProvider>
+                <App />
+              </CurrentPlayerProvider>
+            </HandProvider>
+          </HandsProvider>
+        </GameProvider>
+      </GamesProvider>
     </FirebaseContext.Provider>
   </Provider>,
   document.getElementById('root'),

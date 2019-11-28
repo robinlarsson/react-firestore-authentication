@@ -1,9 +1,10 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useContext } from 'react';
 
 import GameItem from '../GameItem';
+import { GamesContext } from '../../../context/GamesContext';
 
-const GameList = ({ games }) => {
+const GameList = () => {
+  const { games } = useContext(GamesContext);
   return (
     <ul>
       {games &&
@@ -14,12 +15,4 @@ const GameList = ({ games }) => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    games: state.games.games,
-  };
-};
-
-const withConnect = connect(mapStateToProps);
-
-export default withConnect(GameList);
+export default GameList;

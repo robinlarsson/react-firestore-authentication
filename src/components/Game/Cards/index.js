@@ -1,10 +1,21 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
+import { connect } from 'react-redux';
 
-import { withFirebase } from '../../Firebase';
+import { CurrentPlayerContext } from '../../../context/CurrentPlayerContext';
+import { GameContext } from '../../../context/GameContext';
+import { HandContext } from '../../../context/HandContext';
+import { HandsContext } from '../../../context/HandsContext';
+import { editGame } from '../../Games/actions';
+import { editHand } from '../Hand/actions';
 
-class Cards extends Component {
-  onPlayCard = card => {
-    const { game, hand, hands, gameId } = this.props;
+export const Cards = ({ onEditGame, onEditHand }) => {
+  const { game } = useContext(GameContext);
+  const { hand } = useContext(HandContext);
+  const { hands } = useContext(HandsContext);
+  const { isCurrentPlayer } = useContext(CurrentPlayerContext);
+  const cards = hand.cards;
+
+  const onPlayCard = card => {
     const player =
       hands.length === hand.player ? 1 : Number(hand.player + 1);
     const round =
@@ -12,12 +23,12 @@ class Cards extends Component {
         ? Number(game.round + 1)
         : game.round;
 
-    this.props.firebase.hand(gameId, hand.uid).set({
+    onEditHand(game, {
       ...hand,
       cards: { ...hand.cards, [card]: true },
     });
 
-    this.props.firebase.game(gameId).set({
+    onEditGame({
       ...game,
       player,
       round,
@@ -25,39 +36,52 @@ class Cards extends Component {
     });
   };
 
-  render() {
-    const { cards, game, hand } = this.props;
-    const isCurrentPlayer = game.player === hand.player;
+  console.log(isCurrentPlayer);
 
-    return (
-      <>
-        {cards && (
-          <>
-            {Object.keys(cards).map(card => {
-              return (
-                <div key={card}>
-                  {card} card is
-                  {cards[card] ? ' played' : ' not played'}
-                  {!game.betStarted &&
-                    isCurrentPlayer &&
-                    cards[card] === false && (
-                      <button
-                        type="button"
-                        onClick={() => this.onPlayCard(card)}
-                      >
-                        Play card
-                      </button>
-                    )}
-                </div>
-              );
-            })}
-          </>
-        )}
+  return (
+    <>
+      {cards && (
+        <>
+          {Object.keys(cards).map(card => {
+            return (
+              <div key={card}>
+                {card} card is
+                {cards[card] ? ' played' : ' not played'}
+                {!game.betStarted &&
+                  isCurrentPlayer(hand) &&
+                  cards[card] === false && (
+                    <button
+                      type="button"
+                      onClick={() => onPlayCard(card)}
+                    >
+                      Play card
+                    </button>
+                  )}
+              </div>
+            );
+          })}
+        </>
+      )}
 
-        {!cards && <div>Cards not found ...</div>}
-      </>
-    );
-  }
-}
+      {!cards && <div>Cards not found ...</div>}
+    </>
+  );
+};
 
-export default withFirebase(Cards);
+const mapDispatchToProps = dispatch => {
+  return {
+    onEditGame: game => {
+      dispatch(editGame(game));
+    },
+    onEditHand: (game, hand) => {
+      dispatch(editHand(game, hand));
+    },
+  };
+};
+
+const withConnect = connect(
+  null,
+  mapDispatchToProps,
+);
+
+export default withConnect(Cards);

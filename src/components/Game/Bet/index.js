@@ -1,15 +1,22 @@
-import React, { Component } from 'react';
+import React, { useContext, useState } from 'react';
+import { connect } from 'react-redux';
 
-import { withFirebase } from '../../Firebase';
+import { GameContext } from '../../../context/GameContext';
+import { HandContext } from '../../../context/HandContext';
+import { CurrentPlayerContext } from '../../../context/CurrentPlayerContext';
 
-class Bet extends Component {
-  state = {
-    bet: 0,
-  };
+import { editGame } from '../../Games/actions';
+import { editHand } from '../Hand/actions';
+import { HandsContext } from '../../../context/HandsContext';
 
-  onBet = event => {
-    const { hand, hands, game, gameId } = this.props;
-    const { bet } = this.state;
+export const Bet = ({ onEditGame, onEditHand }) => {
+  const { game } = useContext(GameContext);
+  const { hand } = useContext(HandContext);
+  const { hands } = useContext(HandsContext);
+  const { isCurrentPlayer } = useContext(CurrentPlayerContext);
+  const [bet, setBet] = useState(hand.bet);
+
+  const onBet = event => {
     const player =
       hands.length === hand.player ? 1 : Number(hand.player + 1);
     const round =
@@ -17,12 +24,12 @@ class Bet extends Component {
         ? Number(game.round + 1)
         : game.round;
 
-    this.props.firebase.hand(gameId, hand.uid).set({
+    onEditHand({
       ...hand,
       bet,
     });
 
-    this.props.firebase.game(gameId).set({
+    onEditGame({
       ...game,
       player,
       round,
@@ -33,32 +40,38 @@ class Bet extends Component {
     event.preventDefault();
   };
 
-  handleChangeBet = event => {
-    this.setState({ bet: event.target.value });
+  return (
+    <>
+      {isCurrentPlayer(hand) && game.round > 0 && (
+        <span>
+          <form onSubmit={onBet}>
+            <input
+              type="number"
+              value={bet}
+              onChange={event => setBet(event.target.value)}
+            ></input>
+            <input type="submit" value="Bet" />
+          </form>
+        </span>
+      )}
+    </>
+  );
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onEditGame: game => {
+      dispatch(editGame(game));
+    },
+    onEditHand: (game, hand) => {
+      dispatch(editHand(game, hand));
+    },
   };
+};
 
-  render() {
-    const { hand, game } = this.props;
-    const { bet } = this.state;
-    const isCurrentPlayer = game.player === hand.player;
+const withConnect = connect(
+  null,
+  mapDispatchToProps,
+);
 
-    return (
-      <>
-        {isCurrentPlayer && game.round > 0 && (
-          <span>
-            <form onSubmit={this.onBet}>
-              <input
-                type="number"
-                value={bet}
-                onChange={this.handleChangeBet}
-              ></input>
-              <input type="submit" value="Bet" />
-            </form>
-          </span>
-        )}
-      </>
-    );
-  }
-}
-
-export default withFirebase(Bet);
+export default withConnect(Bet);

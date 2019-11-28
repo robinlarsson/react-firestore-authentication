@@ -1,10 +1,20 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
+import { connect } from 'react-redux';
 
-import { withFirebase } from '../../Firebase';
+import { CurrentPlayerContext } from '../../../context/CurrentPlayerContext';
+import { GameContext } from '../../../context/GameContext';
+import { HandContext } from '../../../context/HandContext';
+import { HandsContext } from '../../../context/HandsContext';
+import { editGame } from '../../Games/actions';
+import { editHand } from '../Hand/actions';
 
-class Fold extends Component {
-  onFold = () => {
-    const { hand, hands, game, gameId } = this.props;
+export const Fold = ({ onEditGame, onEditHand }) => {
+  const { game } = useContext(GameContext);
+  const { hand } = useContext(HandContext);
+  const { hands } = useContext(HandsContext);
+  const { isCurrentPlayer } = useContext(CurrentPlayerContext);
+
+  const onFold = (hand, hands, game) => {
     let players = game.players;
     const iterator = this.findNextPlayer(hand)[Symbol.iterator](
       players,
@@ -19,12 +29,12 @@ class Fold extends Component {
         ? Number(game.round + 1)
         : game.round;
 
-    this.props.firebase.hand(gameId, hand.uid).set({
+    onEditHand(game, {
       ...hand,
       hasFolded: true,
     });
 
-    this.props.firebase.game(gameId).set({
+    onEditGame({
       ...game,
       player,
       players,
@@ -33,54 +43,33 @@ class Fold extends Component {
     });
   };
 
-  findNextPlayer = hand => {
-    return {
-      [Symbol.iterator](players) {
-        console.log(hand, players);
-        let currentPlayerIndex = 0;
+  return (
+    <>
+      {isCurrentPlayer(hand) && game.betStarted > 0 && (
+        <span>
+          <button onClick={() => onFold(hand, hands, game)}>
+            Fold
+          </button>
+        </span>
+      )}
+    </>
+  );
+};
 
-        Object.keys(players).forEach((key, index) => {
-          console.log(key, index);
-          if (key === hand.player) {
-            currentPlayerIndex = index;
-          }
-        });
-
-        console.log(currentPlayerIndex);
-
-        return {
-          next() {
-            const doNothaveMorePlayers = !(
-              currentPlayerIndex < players.length
-            );
-
-            if (doNothaveMorePlayers) {
-              currentPlayerIndex = 0;
-            }
-
-            console.log(currentPlayerIndex, Object.keys(players));
-
-            return Number(Object.keys(players)[currentPlayerIndex++]);
-          },
-        };
-      },
-    };
+const mapDispatchToProps = dispatch => {
+  return {
+    onEditGame: game => {
+      dispatch(editGame(game));
+    },
+    onEditHand: (game, hand) => {
+      dispatch(editHand(game, hand));
+    },
   };
+};
 
-  render() {
-    const { hand, game } = this.props;
-    const isCurrentPlayer = game.player === hand.player;
+const withConnect = connect(
+  null,
+  mapDispatchToProps,
+);
 
-    return (
-      <>
-        {isCurrentPlayer && game.betStarted > 0 && (
-          <span>
-            <button onClick={() => this.onFold()}>Fold</button>
-          </span>
-        )}
-      </>
-    );
-  }
-}
-
-export default withFirebase(Fold);
+export default withConnect(Fold);

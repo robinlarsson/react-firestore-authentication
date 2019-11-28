@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -7,11 +7,12 @@ import { editGame, deleteGame } from '../../Games/actions';
 import * as ROUTES from '../../../constants/routes';
 
 const GameItem = ({ game, onDeleteGame, onEditGame }) => {
+  const authUser = useContext(AuthUserContext);
   const [name, setName] = useState(game.name);
   const [editMode, setEditMode] = useState(false);
 
   const onSaveEditText = () => {
-    onEditGame(game, name);
+    onEditGame({ ...game, name });
 
     setEditMode(!editMode);
   };
@@ -26,44 +27,40 @@ const GameItem = ({ game, onDeleteGame, onEditGame }) => {
         </span>
       )}
 
-      <AuthUserContext.Consumer>
-        {authUser => (
-          <>
-            {authUser.uid === game.userId && (
-              <span>
-                {editMode ? (
-                  <>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={event => setName(event.target.value)}
-                    />
-                    <span>
-                      <button onClick={onSaveEditText}>Save</button>
-                      <button onClick={() => setEditMode(!editMode)}>
-                        Cancel
-                      </button>
-                    </span>
-                  </>
-                ) : (
+      <>
+        {authUser.uid === game.userId && (
+          <span>
+            {editMode ? (
+              <>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={event => setName(event.target.value)}
+                />
+                <span>
+                  <button onClick={onSaveEditText}>Save</button>
                   <button onClick={() => setEditMode(!editMode)}>
-                    Edit
+                    Cancel
                   </button>
-                )}
-
-                {!editMode && (
-                  <button
-                    type="button"
-                    onClick={() => onDeleteGame(game.uid)}
-                  >
-                    Delete
-                  </button>
-                )}
-              </span>
+                </span>
+              </>
+            ) : (
+              <button onClick={() => setEditMode(!editMode)}>
+                Edit
+              </button>
             )}
-          </>
+
+            {!editMode && (
+              <button
+                type="button"
+                onClick={() => onDeleteGame(game.uid)}
+              >
+                Delete
+              </button>
+            )}
+          </span>
         )}
-      </AuthUserContext.Consumer>
+      </>
     </li>
   );
 };

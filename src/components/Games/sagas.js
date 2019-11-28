@@ -66,12 +66,9 @@ export function* addGame({ name, authUser }) {
   }
 }
 
-export function* editGame({ game, name }) {
+export function* editGame({ game }) {
   try {
-    yield call(rsf.firestore.setDocument, `game/${game.uid}`, {
-      ...game,
-      name,
-    });
+    yield call(rsf.firestore.setDocument, `game/${game.uid}`, game);
     yield put({
       type: EDIT_GAME_SUCCEEDED,
     });

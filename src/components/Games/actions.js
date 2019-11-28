@@ -19,8 +19,8 @@ export function addGame(name, authUser) {
   return { type: ADD_GAME_REQUESTED, name, authUser };
 }
 
-export function editGame(game, name) {
-  return { type: EDIT_GAME_REQUESTED, game, name };
+export function editGame(game) {
+  return { type: EDIT_GAME_REQUESTED, game };
 }
 
 export function deleteGame(id) {

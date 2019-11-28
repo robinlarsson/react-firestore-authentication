@@ -1,31 +1,30 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
 
 import { AuthUserContext } from '../../Session';
-import { withFirebase } from '../../Firebase';
 import Cards from '../Cards';
 import Fold from '../Fold';
 import Bet from '../Bet';
+import { HandContext } from '../../../context/HandContext';
 
-class Hand extends Component {
-  render() {
-    const { hand } = this.props;
+export const Hand = () => {
+  const authUser = useContext(AuthUserContext);
+  const { hand } = useContext(HandContext);
 
-    return (
-      <AuthUserContext.Consumer>
-        {authUser => (
-          <>
-            <h1>
-              Player {hand.player}, {authUser.email}'s hand
-            </h1>
+  return (
+    <>
+      {hand && (
+        <>
+          <h1>
+            Player {hand.player}, {authUser.email}'s hand
+          </h1>
 
-            <Bet {...this.props} />
-            <Fold {...this.props} />
-            <Cards cards={hand.cards} {...this.props} />
-          </>
-        )}
-      </AuthUserContext.Consumer>
-    );
-  }
-}
+          <Bet />
+          <Fold />
+          <Cards />
+        </>
+      )}
+    </>
+  );
+};
 
-export default withFirebase(Hand);
+export default Hand;

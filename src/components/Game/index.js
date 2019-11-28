@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 
 import { fetchGame, fetchHands, joinGame } from './actions';
 import { AuthUserContext } from '../Session';
 import Hands from './Hands';
+import { GameContext } from '../../context/GameContext';
+import { HandsContext } from '../../context/HandsContext';
 
 export const Game = ({
   match,
@@ -14,6 +16,9 @@ export const Game = ({
   onFetchHands,
   onJoinGame,
 }) => {
+  const authUser = useContext(AuthUserContext);
+  const { setGame } = useContext(GameContext);
+  const { setHands } = useContext(HandsContext);
   const gameId = match.params.id;
 
   useEffect(() => {
@@ -21,53 +26,51 @@ export const Game = ({
     onFetchHands(gameId);
   }, [onFetchGame, onFetchHands, gameId]);
 
-  console.log(game, hands, gameLoading);
+  setGame(game);
+  setHands(hands);
+
   return (
-    <AuthUserContext.Consumer>
-      {authUser => (
-        <div>
-          {gameLoading && <div>Loading ...</div>}
+    <div>
+      {gameLoading && <div>Loading ...</div>}
 
-          {game && (
+      {game && (
+        <>
+          <h1>{game.name}</h1>
+
+          {hands && (
             <>
-              <h1>{game.name}</h1>
-
-              {hands && (
-                <>
-                  <span>Players: {hands.length}</span>
-                  <div>Round: {game.round}</div>
-                  <div>
-                    Status: {game.betStarted ? 'betting' : 'playing'}
-                  </div>
-                  <Hands hands={hands} game={game} gameId={gameId} />
-                </>
-              )}
-
-              {hands === null ||
-              (hands &&
-                hands.filter(hand => hand.userId === authUser.uid)
-                  .length === 0 &&
-                game.turn === 0) ? (
-                <span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onJoinGame(gameId, hands, game, authUser)
-                    }
-                  >
-                    Join game
-                  </button>
-                </span>
-              ) : (
-                ''
-              )}
+              <span>Players: {hands.length}</span>
+              <div>Round: {game.round}</div>
+              <div>
+                Status: {game.betStarted ? 'betting' : 'playing'}
+              </div>
+              <Hands />
             </>
           )}
 
-          {!game && <div>Game not found ...</div>}
-        </div>
+          {hands === null ||
+          (hands &&
+            hands.filter(hand => hand.userId === authUser.uid)
+              .length === 0 &&
+            game.turn === 0) ? (
+            <span>
+              <button
+                type="button"
+                onClick={() =>
+                  onJoinGame(gameId, hands, game, authUser)
+                }
+              >
+                Join game
+              </button>
+            </span>
+          ) : (
+            ''
+          )}
+        </>
       )}
-    </AuthUserContext.Consumer>
+
+      {!game && <div>Game not found ...</div>}
+    </div>
   );
 };
 
