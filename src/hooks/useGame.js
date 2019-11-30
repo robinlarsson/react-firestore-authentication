@@ -17,28 +17,24 @@ const useGame = () => {
     ? game.player === authUserHand.player
     : false;
 
-  const setNextPlayer = hand => {
-    return {
-      [Symbol.iterator](players) {
-        let currentPlayerIndex = 0;
+  const isNewRound = authUserHand
+    ? hands.length === authUserHand.player
+    : false;
 
-        Object.keys(players).forEach((key, index) => {
-          if (key === hand.player) {
-            currentPlayerIndex = index;
-          }
-        });
+  const getNextPlayer = () => {
+    const currentPlayer = game.player;
+    const playingHands = hands.filter(hand => !hand.hasFolded);
+    const nextHand = playingHands.find(
+      hand => isNewRound || hand.player > currentPlayer,
+    );
 
-        return {
-          next() {
-            if (currentPlayerIndex < players.length) {
-              currentPlayerIndex = 0;
-            }
+    return nextHand.player || 0;
+  };
 
-            return Number(Object.keys(players)[currentPlayerIndex++]);
-          },
-        };
-      },
-    };
+  const getNextRound = () => {
+    const currentRound = game ? game.round : 0;
+
+    return isNewRound ? Number(currentRound + 1) : currentRound;
   };
 
   return {
@@ -46,10 +42,11 @@ const useGame = () => {
     hands,
     currentPlayer: game ? game.player : 0,
     isCurrentPlayer,
-    setNextPlayer,
+    getNextPlayer,
     hand: authUserHand,
     authUser,
     gameLoading,
+    getNextRound,
   };
 };
 

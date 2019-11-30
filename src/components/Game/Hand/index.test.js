@@ -7,7 +7,6 @@ const game = {
   createdAt: '',
   name: 'game1',
   player: 1,
-  players: { 1: false },
   round: 0,
   turn: 0,
   userId: 'user1',

@@ -34,7 +34,6 @@ export function* joinGame({ id, hands, game, authUser }) {
       hasFolded: false,
       userId: authUser.uid,
       player,
-      players: { ...game.players, [player]: false },
     });
     yield put({
       type: JOIN_GAME_SUCCEEDED,

@@ -56,7 +56,6 @@ export function* addGame({ name, authUser }) {
       round: 0,
       turn: 0,
       player: 1,
-      players: {},
     });
     yield put({
       type: ADD_GAME_SUCCEEDED,

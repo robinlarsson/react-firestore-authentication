@@ -6,20 +6,19 @@ import { editHand } from '../Hand/actions';
 import useGame from '../../../hooks/useGame';
 
 export const Bet = () => {
-  const { isCurrentPlayer, hands, hand, game } = useGame();
+  const {
+    isCurrentPlayer,
+    getNextRound,
+    getNextPlayer,
+    hand,
+    game,
+  } = useGame();
   const [bet, setBet] = useState(hand.bet);
   const dispatch = useDispatch();
 
-  const onBet = event => {
-    const player =
-      hands.length === hand.player ? 1 : Number(hand.player + 1);
-    const round =
-      hands.length === hand.player
-        ? Number(game.round + 1)
-        : game.round;
-
+  const onBet = () => {
     dispatch(
-      editHand({
+      editHand(game, {
         ...hand,
         bet,
       }),
@@ -28,28 +27,26 @@ export const Bet = () => {
     dispatch(
       editGame({
         ...game,
-        player,
-        round,
+        player: getNextPlayer(),
+        round: getNextRound(),
         turn: Number(game.turn + 1),
         betStarted: true,
       }),
     );
-
-    event.preventDefault();
   };
+
+  const bettingIsAllowed = isCurrentPlayer && game.round > 0;
 
   return (
     <>
-      {isCurrentPlayer && game.round > 0 && (
+      {bettingIsAllowed && (
         <span>
-          <form onSubmit={onBet}>
-            <input
-              type="number"
-              value={bet}
-              onChange={event => setBet(event.target.value)}
-            ></input>
-            <input type="submit" value="Bet" />
-          </form>
+          <input
+            type="number"
+            value={bet}
+            onChange={event => setBet(event.target.value)}
+          ></input>
+          <input type="submit" value="Bet" onClick={() => onBet()} />
         </span>
       )}
     </>

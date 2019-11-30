@@ -3,7 +3,7 @@ import {
   EDIT_HAND_REQUESTED,
   EDIT_HAND_SUCCEEDED,
   EDIT_HAND_FAILED,
-} from '../actions';
+} from './actions';
 import { rsf } from '../../Firebase';
 
 export function* editHand({ game, hand }) {

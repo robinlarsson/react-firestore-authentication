@@ -8,25 +8,15 @@ import useGame from '../../../hooks/useGame';
 export const Fold = () => {
   const {
     isCurrentPlayer,
-    hands,
     hand,
     game,
-    setNextPlayer,
+    getNextPlayer,
+    getNextRound,
   } = useGame();
   const dispatch = useDispatch();
 
-  const onFold = (hand, hands, game) => {
-    let players = game.players;
-    const iterator = setNextPlayer(hand)[Symbol.iterator](players);
-    const player = iterator.next();
-
-    players[player] = true;
-    delete players[hand.player];
-
-    const round =
-      hands.length === hand.player
-        ? Number(game.round + 1)
-        : game.round;
+  const onFold = () => {
+    const nextPlayer = getNextPlayer();
 
     dispatch(
       editHand(game, {
@@ -38,9 +28,8 @@ export const Fold = () => {
     dispatch(
       editGame({
         ...game,
-        player,
-        players,
-        round,
+        player: nextPlayer,
+        round: getNextRound(),
         turn: Number(game.turn + 1),
       }),
     );
@@ -48,11 +37,9 @@ export const Fold = () => {
 
   return (
     <>
-      {isCurrentPlayer && game.betStarted > 0 && (
+      {isCurrentPlayer && (
         <span>
-          <button onClick={() => onFold(hand, hands, game)}>
-            Fold
-          </button>
+          <button onClick={() => onFold()}>Fold</button>
         </span>
       )}
     </>

@@ -6,18 +6,17 @@ import { editHand } from '../Hand/actions';
 import useGame from '../../../hooks/useGame';
 
 export const Cards = () => {
-  const { isCurrentPlayer, hands, hand, game } = useGame();
+  const {
+    isCurrentPlayer,
+    hand,
+    game,
+    getNextPlayer,
+    getNextRound,
+  } = useGame();
   const cards = hand.cards;
   const dispatch = useDispatch();
 
   const onPlayCard = card => {
-    const player =
-      hands.length === hand.player ? 1 : Number(hand.player + 1);
-    const round =
-      hands.length === hand.player
-        ? Number(game.round + 1)
-        : game.round;
-
     dispatch(
       editHand(game, {
         ...hand,
@@ -28,8 +27,8 @@ export const Cards = () => {
     dispatch(
       editGame({
         ...game,
-        player,
-        round,
+        player: getNextPlayer(),
+        round: getNextRound(),
         turn: Number(game.turn + 1),
       }),
     );
