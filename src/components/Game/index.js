@@ -1,33 +1,16 @@
-import React, { useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
-import { fetchGame, fetchHands, joinGame } from './actions';
-import { AuthUserContext } from '../Session';
+import { joinGame } from './actions';
 import Hands from './Hands';
-import { GameContext } from '../../context/GameContext';
-import { HandsContext } from '../../context/HandsContext';
+import useGameLoader from '../../hooks/useGameLoader';
 
-export const Game = ({
-  match,
-  game,
-  hands,
-  gameLoading,
-  onFetchGame,
-  onFetchHands,
-  onJoinGame,
-}) => {
-  const authUser = useContext(AuthUserContext);
-  const { setGame } = useContext(GameContext);
-  const { setHands } = useContext(HandsContext);
+export const Game = ({ match }) => {
   const gameId = match.params.id;
-
-  useEffect(() => {
-    onFetchGame(gameId);
-    onFetchHands(gameId);
-  }, [onFetchGame, onFetchHands, gameId]);
-
-  setGame(game);
-  setHands(hands);
+  const { game, hands, authUser, gameLoading } = useGameLoader(
+    gameId,
+  );
+  const dispatch = useDispatch();
 
   return (
     <div>
@@ -57,7 +40,7 @@ export const Game = ({
               <button
                 type="button"
                 onClick={() =>
-                  onJoinGame(gameId, hands, game, authUser)
+                  dispatch(joinGame(gameId, hands, game, authUser))
                 }
               >
                 Join game
@@ -74,31 +57,4 @@ export const Game = ({
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    game: state.game.game,
-    gameLoading: state.game.gameLoading,
-    hands: state.game.hands,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onFetchGame: id => {
-      dispatch(fetchGame(id));
-    },
-    onFetchHands: id => {
-      dispatch(fetchHands(id));
-    },
-    onJoinGame: (id, hands, game, authUser) => {
-      dispatch(joinGame(id, hands, game, authUser));
-    },
-  };
-};
-
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-);
-
-export default withConnect(Game);
+export default Game;

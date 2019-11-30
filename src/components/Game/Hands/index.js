@@ -1,29 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 
 import Hand from '../Hand';
-import { AuthUserContext } from '../../Session';
-import { HandsContext } from '../../../context/HandsContext';
-import { GameContext } from '../../../context/GameContext';
-import { HandContext } from '../../../context/HandContext';
-import { CurrentPlayerContext } from '../../../context/CurrentPlayerContext';
+import useGame from '../../../hooks/useGame';
 
 export const Hands = () => {
-  const authUser = useContext(AuthUserContext);
-  const { setHand } = useContext(HandContext);
-  const { hands } = useContext(HandsContext);
-  const { game } = useContext(GameContext);
-  const { setCurrentPlayer } = useContext(CurrentPlayerContext);
-
-  useEffect(() => {
-    const authUserHand = hands.find(
-      hand => hand.userId === authUser.uid,
-    );
-
-    setHand(authUserHand);
-    if (game) {
-      setCurrentPlayer(game.player);
-    }
-  }, [authUser, setHand, hands, game, setCurrentPlayer]);
+  const { game, hands } = useGame();
 
   return (
     <div>

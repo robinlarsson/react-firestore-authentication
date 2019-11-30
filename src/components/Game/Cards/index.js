@@ -1,19 +1,14 @@
-import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
-import { CurrentPlayerContext } from '../../../context/CurrentPlayerContext';
-import { GameContext } from '../../../context/GameContext';
-import { HandContext } from '../../../context/HandContext';
-import { HandsContext } from '../../../context/HandsContext';
 import { editGame } from '../../Games/actions';
 import { editHand } from '../Hand/actions';
+import useGame from '../../../hooks/useGame';
 
-export const Cards = ({ onEditGame, onEditHand }) => {
-  const { game } = useContext(GameContext);
-  const { hand } = useContext(HandContext);
-  const { hands } = useContext(HandsContext);
-  const { isCurrentPlayer } = useContext(CurrentPlayerContext);
+export const Cards = () => {
+  const { isCurrentPlayer, hands, hand, game } = useGame();
   const cards = hand.cards;
+  const dispatch = useDispatch();
 
   const onPlayCard = card => {
     const player =
@@ -23,20 +18,22 @@ export const Cards = ({ onEditGame, onEditHand }) => {
         ? Number(game.round + 1)
         : game.round;
 
-    onEditHand(game, {
-      ...hand,
-      cards: { ...hand.cards, [card]: true },
-    });
+    dispatch(
+      editHand(game, {
+        ...hand,
+        cards: { ...hand.cards, [card]: true },
+      }),
+    );
 
-    onEditGame({
-      ...game,
-      player,
-      round,
-      turn: Number(game.turn + 1),
-    });
+    dispatch(
+      editGame({
+        ...game,
+        player,
+        round,
+        turn: Number(game.turn + 1),
+      }),
+    );
   };
-
-  console.log(isCurrentPlayer);
 
   return (
     <>
@@ -48,7 +45,7 @@ export const Cards = ({ onEditGame, onEditHand }) => {
                 {card} card is
                 {cards[card] ? ' played' : ' not played'}
                 {!game.betStarted &&
-                  isCurrentPlayer(hand) &&
+                  isCurrentPlayer &&
                   cards[card] === false && (
                     <button
                       type="button"
@@ -68,20 +65,4 @@ export const Cards = ({ onEditGame, onEditHand }) => {
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onEditGame: game => {
-      dispatch(editGame(game));
-    },
-    onEditHand: (game, hand) => {
-      dispatch(editHand(game, hand));
-    },
-  };
-};
-
-const withConnect = connect(
-  null,
-  mapDispatchToProps,
-);
-
-export default withConnect(Cards);
+export default Cards;

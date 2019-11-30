@@ -1,20 +1,14 @@
-import React, { useContext, useState } from 'react';
-import { connect } from 'react-redux';
-
-import { GameContext } from '../../../context/GameContext';
-import { HandContext } from '../../../context/HandContext';
-import { CurrentPlayerContext } from '../../../context/CurrentPlayerContext';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { editGame } from '../../Games/actions';
 import { editHand } from '../Hand/actions';
-import { HandsContext } from '../../../context/HandsContext';
+import useGame from '../../../hooks/useGame';
 
-export const Bet = ({ onEditGame, onEditHand }) => {
-  const { game } = useContext(GameContext);
-  const { hand } = useContext(HandContext);
-  const { hands } = useContext(HandsContext);
-  const { isCurrentPlayer } = useContext(CurrentPlayerContext);
+export const Bet = () => {
+  const { isCurrentPlayer, hands, hand, game } = useGame();
   const [bet, setBet] = useState(hand.bet);
+  const dispatch = useDispatch();
 
   const onBet = event => {
     const player =
@@ -24,25 +18,29 @@ export const Bet = ({ onEditGame, onEditHand }) => {
         ? Number(game.round + 1)
         : game.round;
 
-    onEditHand({
-      ...hand,
-      bet,
-    });
+    dispatch(
+      editHand({
+        ...hand,
+        bet,
+      }),
+    );
 
-    onEditGame({
-      ...game,
-      player,
-      round,
-      turn: Number(game.turn + 1),
-      betStarted: true,
-    });
+    dispatch(
+      editGame({
+        ...game,
+        player,
+        round,
+        turn: Number(game.turn + 1),
+        betStarted: true,
+      }),
+    );
 
     event.preventDefault();
   };
 
   return (
     <>
-      {isCurrentPlayer(hand) && game.round > 0 && (
+      {isCurrentPlayer && game.round > 0 && (
         <span>
           <form onSubmit={onBet}>
             <input
@@ -58,20 +56,4 @@ export const Bet = ({ onEditGame, onEditHand }) => {
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onEditGame: game => {
-      dispatch(editGame(game));
-    },
-    onEditHand: (game, hand) => {
-      dispatch(editHand(game, hand));
-    },
-  };
-};
-
-const withConnect = connect(
-  null,
-  mapDispatchToProps,
-);
-
-export default withConnect(Bet);
+export default Bet;

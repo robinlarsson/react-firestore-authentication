@@ -1,14 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { AuthUserContext } from '../../Session';
 import Cards from '../Cards';
 import Fold from '../Fold';
 import Bet from '../Bet';
-import { HandContext } from '../../../context/HandContext';
+import useGame from '../../../hooks/useGame';
 
 export const Hand = () => {
-  const authUser = useContext(AuthUserContext);
-  const { hand } = useContext(HandContext);
+  const { hand, authUser } = useGame();
 
   return (
     <>
