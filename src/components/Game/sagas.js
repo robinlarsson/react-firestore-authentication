@@ -25,10 +25,10 @@ export function* joinGame({ id, hands, game, authUser }) {
     yield call(rsf.firestore.addDocument, `game/${id}/hands`, {
       bet: 0,
       cards: {
-        first: false,
-        second: false,
-        third: false,
-        forth: false,
+        1: false,
+        2: false,
+        3: false,
+        4: false,
       },
       hasWon: false,
       hasFolded: false,

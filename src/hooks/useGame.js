@@ -24,6 +24,7 @@ const useGame = () => {
   const getNextPlayer = () => {
     const currentPlayer = game.player;
     const playingHands = hands.filter(hand => !hand.hasFolded);
+    // todo sort by player number before assuming an order.
     const nextHand = playingHands.find(
       hand => isNewRound || hand.player > currentPlayer,
     );

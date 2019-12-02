@@ -16,10 +16,10 @@ const hands = [
   {
     bet: 0,
     cards: {
-      first: false,
-      forth: false,
-      second: false,
-      third: false,
+      1: false,
+      2: false,
+      3: false,
+      4: false,
     },
     hasFolded: false,
     hasWon: false,
