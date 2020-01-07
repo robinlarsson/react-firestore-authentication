@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { editGame } from '../../Games/actions';
-import { editHand } from '../Hand/actions';
+import { editHand } from '../CurrentHand/actions';
 import useGame from '../../../hooks/useGame';
 
 export const Fold = () => {

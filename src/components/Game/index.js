@@ -4,12 +4,15 @@ import { useDispatch } from 'react-redux';
 import { joinGame } from './actions';
 import Hands from './Hands';
 import useGameLoader from '../../hooks/useGameLoader';
+import useGame from '../../hooks/useGame';
+import CurrentHand from './CurrentHand';
 
 export const Game = ({ match }) => {
   const gameId = match.params.id;
   const { game, hands, authUser, gameLoading } = useGameLoader(
     gameId,
   );
+  const { hand } = useGame();
   const dispatch = useDispatch();
 
   return (
@@ -27,6 +30,8 @@ export const Game = ({ match }) => {
               <div>
                 Status: {game.betStarted ? 'betting' : 'playing'}
               </div>
+
+              {hand && <CurrentHand />}
               <Hands />
             </>
           )}
