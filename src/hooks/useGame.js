@@ -29,7 +29,7 @@ const useGame = () => {
       hand => isNewRound || hand.player > currentPlayer,
     );
 
-    return nextHand.player || 0;
+    return nextHand ? nextHand.player : currentPlayer;
   };
 
   const getNextRound = () => {

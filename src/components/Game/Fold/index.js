@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { editGame } from '../../Games/actions';
 import { editHand } from '../CurrentHand/actions';
 import useGame from '../../../hooks/useGame';
+import { GAME_STATUS } from '../../Games/sagas';
 
 export const Fold = () => {
   const {
@@ -31,6 +32,10 @@ export const Fold = () => {
         player: nextPlayer,
         round: getNextRound(),
         turn: Number(game.turn + 1),
+        status:
+          nextPlayer === game.player
+            ? GAME_STATUS.picking
+            : game.status,
       }),
     );
   };

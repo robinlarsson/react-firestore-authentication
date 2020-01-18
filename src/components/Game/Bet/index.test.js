@@ -3,7 +3,6 @@ import { cleanup, fireEvent, render } from '@testing-library/react';
 import Bet from './';
 
 const game = {
-  betStarted: false,
   createdAt: '',
   name: 'game1',
   player: 1,
@@ -22,7 +21,6 @@ const hands = [
       4: false,
     },
     hasFolded: false,
-    hasWon: false,
     player: 1,
     uid: 'hand1',
     userId: 'user1',

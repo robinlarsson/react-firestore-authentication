@@ -22,6 +22,13 @@ import {
 import { rsf } from '../Firebase';
 import firebase from 'firebase/app';
 
+export const GAME_STATUS = {
+  initiated: 0,
+  started: 1,
+  betting: 2,
+  picking: 3,
+};
+
 export function* syncGamesSaga() {
   try {
     const channel = rsf.firestore.channel('game');
@@ -56,6 +63,9 @@ export function* addGame({ name, authUser }) {
       round: 0,
       turn: 0,
       player: 1,
+      highestBet: 0,
+      status: GAME_STATUS.initiated,
+      playedCards: {},
     });
     yield put({
       type: ADD_GAME_SUCCEEDED,

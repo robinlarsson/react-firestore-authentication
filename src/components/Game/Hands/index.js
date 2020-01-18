@@ -2,6 +2,7 @@ import React from 'react';
 
 import Cards from '../Cards';
 import useGame from '../../../hooks/useGame';
+import { GAME_STATUS } from '../../Games/sagas';
 
 export const Hands = () => {
   const { game, hands } = useGame();
@@ -14,7 +15,9 @@ export const Hands = () => {
             return (
               <div key={hand.uid}>
                 Player {hand.player}
-                {game.betStarted && <span> bet {hand.bet}</span>}{' '}
+                {game.status === GAME_STATUS.betting && (
+                  <span> bet {hand.bet}</span>
+                )}{' '}
                 {hand.hasFolded ? 'has folded' : 'has not folded'}{' '}
                 {game.player === hand.player
                   ? 'currently playing'

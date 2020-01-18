@@ -6,6 +6,7 @@ import Hands from './Hands';
 import useGameLoader from '../../hooks/useGameLoader';
 import useGame from '../../hooks/useGame';
 import CurrentHand from './CurrentHand';
+import { GAME_STATUS } from '../Games/sagas';
 
 export const Game = ({ match }) => {
   const gameId = match.params.id;
@@ -28,7 +29,12 @@ export const Game = ({ match }) => {
               <span>Players: {hands.length}</span>
               <div>Round: {game.round}</div>
               <div>
-                Status: {game.betStarted ? 'betting' : 'playing'}
+                Status:{' '}
+                {game.status === GAME_STATUS.betting
+                  ? 'betting'
+                  : game.status === GAME_STATUS.picking
+                  ? 'picking'
+                  : 'playing'}
               </div>
 
               {hand && <CurrentHand />}

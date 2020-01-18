@@ -30,7 +30,6 @@ export function* joinGame({ id, hands, game, authUser }) {
         3: false,
         4: false,
       },
-      hasWon: false,
       hasFolded: false,
       userId: authUser.uid,
       player,
